@@ -1,0 +1,245 @@
+.page-container {
+    min-height: 100vh;
+    background: #f8fafc;
+    padding: 32px;
+    position: relative;
+    margin-top: 5%;
+}
+
+/* SETTINGS BUTTON */
+.settings-btn {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    border-radius: 50%;
+    padding: 7px 8px;
+    cursor: pointer;
+    transition: 0.2s;
+    border:none;
+    background-color: white;
+}
+.settings-btn:hover {
+    background: #f1f1f1;
+}
+.settings-icon {
+    width: 24px;
+    height: 24px;
+    color: #555;
+}
+
+/* HEADER */
+.header-section {
+    font-size: 16px;
+    margin-bottom: 40px;
+    font-weight: 700;
+}
+
+/* DOMAIN LIST */
+.domain-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.domain-card {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.25s;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+.domain-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+}
+
+.domain-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.domain-name {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+}
+
+.domain-arrow {
+    width: 24px;
+    height: 24px;
+    color: #777;
+}
+
+.domain-url {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #1d4ed8;
+    text-decoration: underline;
+}
+.domain-url-link {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* MODAL */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+}
+
+.modal-box {
+    width: 420px;
+    background: rgba(255,255,255,0.9);
+    padding: 28px;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    position: relative;
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Close Button */
+.modal-close-btn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: transparent;
+    border-radius: 50%;
+    padding: 5px 4px 2px 4px;
+    cursor: pointer;
+    transition: 0.2s;
+    border: none;
+}
+.modal-close-btn:hover {
+    background: #eee;
+}
+.modal-close-icon {
+    width: 24px;
+    height: 24px;
+    color: #444;
+}
+
+/* Header */
+.modal-header {
+    margin-bottom: 20px;
+}
+.modal-subheading {
+    font-size: 11px;
+    color: #666;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+.modal-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #222;
+    margin-top: 4px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+/* Input */
+.modal-label {
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 8px;
+    display: block;
+}
+.modal-input-wrapper {
+    position: relative;
+}
+.modal-input {
+    width: 92%;
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: white;
+    font-size: 14px;
+}
+.modal-icon-right {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+.modal-input-icon {
+    width: 20px;
+    height: 20px;
+    color: #999;
+}
+
+/* Submit Button */
+.modal-submit-btn {
+    margin-top: 16px;
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(to right, #2563eb, #4f46e5);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s;
+}
+.modal-submit-btn:hover {
+    background: linear-gradient(to right, #1e40af, #4338ca);
+}
+.modal-submit-icon {
+    width: 20px;
+    height: 20px;
+}
+
+/* Message */
+.modal-message {
+    margin-top: 12px;
+    text-align: center;
+    font-size: 14px;
+    color: #444;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(12px) scale(0.97); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+
+/*Loader css */
+
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(81, 78, 78, 0.6);
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #ddd;
+    border-top: 4px solid #6366f1;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}

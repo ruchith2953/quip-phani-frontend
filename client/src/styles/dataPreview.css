@@ -1,0 +1,70 @@
+.editor-main {
+    margin-top: 5%;
+}
+
+/* ===== PAGE LAYOUT ===== */
+
+.editing-main-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f8fafc;
+}
+
+.editor-main {
+  flex: 1;
+  display: flex;
+  height: calc(100vh - 120px);
+  overflow: hidden;
+}
+
+/* ===== LEFT SIDEBAR ===== */
+
+.component-list {
+  max-height: 660px;
+  width: 320px;
+  margin-bottom: 70px;
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  overflow-y: auto;
+}
+
+.component-item {
+  padding: 14px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background 0.2s ease, border-left 0.2s ease;
+}
+
+.component-item:hover {
+  background: #f8fafc;
+}
+
+.component-item.active {
+  background: #eef6ff;
+  border-left: 4px solid #2563eb;
+}
+
+.component-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.component-path {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 4px;
+  word-break: break-all;
+}
+
+/* ===== RIGHT EDITOR PANEL ===== */
+
+.editor-console {
+  max-height: 650px;
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  background: #f9fafb;
+}
+

@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 const proxyApiOptions = {
-    target: "http://localhost:9091" || "http://quip.nextrow.net:8894",
+    target: process.env.EXTRACTDATA || "http://135.237.40.183:9091",
     changeOrigin: true,
     pathRewrite: {
         '^/proxy': '',

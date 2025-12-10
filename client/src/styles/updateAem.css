@@ -1,0 +1,50 @@
+.update-aem-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.aem-main-page {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 24px;
+}
+
+.aem-btn-group {
+    display: flex;
+    gap: 18px;
+}
+
+/* Common button */
+.btn {
+    padding: 12px 26px;
+    border-radius: 8px;
+    border: none;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+/* Primary */
+.primary-btn {
+    background-color: #4f46e5;
+    color: #fff;
+}
+
+.primary-btn:hover {
+    background-color: #4338ca;
+}
+
+/* Secondary */
+.secondary-btn {
+    background-color: #10b981;
+    color: #fff;
+}
+
+.secondary-btn:hover {
+    background-color: #059669;
+}

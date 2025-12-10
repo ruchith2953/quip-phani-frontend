@@ -1,0 +1,130 @@
+/* ---------- PAGE LAYOUT ---------- */
+.settings-container {
+    margin: 30px;
+    padding: 10px;
+    font-family: Arial, sans-serif;
+    margin-top: 7%;
+}
+
+/* ---------- HEADINGS ---------- */
+.settings-title {
+    font-size: 26px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* ---------- TOP FLEX WRAPPER ---------- */
+.top-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap; /* Makes responsive */
+}
+
+/* ---------- LEFT GROUP: Input + Create Button ---------- */
+.left-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* ---------- RIGHT GROUP: Back Button ---------- */
+.right-group {
+    display: flex;
+    align-items: center;
+}
+
+/* ---------- BUTTONS ---------- */
+.create-btn,
+.back-btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.25s;
+    white-space: nowrap;
+}
+
+.create-btn {
+    background-color: #28a745;
+    color: white;
+}
+.create-btn:hover {
+    background-color: #218838;
+}
+
+.back-btn {
+    background-color: #555;
+    color: white;
+}
+.back-btn:hover {
+    background-color: #444;
+}
+
+/* ---------- INPUT FIELD ---------- */
+.domain-input {
+    width: 300px;
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+}
+.domain-input:focus {
+    border-color: #007bff;
+}
+
+/* ---------- MESSAGE ---------- */
+.message-text {
+    color: #d60000;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+/* ---------- TABLE ---------- */
+.domain-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 15px;
+}
+
+.domain-table th {
+    background: #f2f2f2;
+    padding: 12px;
+    text-align: left;
+    border-bottom: 2px solid #ddd;
+}
+
+.domain-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e1e1e1;
+}
+
+.domain-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* ---------- LINKS ---------- */
+.domain-link {
+    color: #007bff;
+    text-decoration: none;
+}
+.domain-link:hover {
+    text-decoration: underline;
+}
+.Dashboard-setting{
+    display: flex;
+    flex-direction: column;
+}
+
+/*mapper file css */
+.upload-btn{
+    padding: 5px 10px;
+    background-color: #007bff;
+    border-radius: 12px;
+}
+.file-name{
+    font-weight: 700;
+    font-size: 14px;
+}

@@ -1,0 +1,197 @@
+/* =========================
+   CONTAINER
+========================= */
+
+.editor-container {
+  margin-bottom: 50px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 16px 35px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+}
+
+/* Empty state */
+.empty-state {
+  padding: 60px;
+  text-align: center;
+  color: #64748b;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.editor-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+  padding: 18px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.editor-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.editor-title span {
+  color: #2563eb;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.btn-group {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  padding: 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-back {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.btn-aem {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+}
+.btn-disabled {
+  background: #e5e7eb;
+  box-shadow: none;
+  color: #374151;
+  cursor: not-allowed;
+}
+
+/* =========================
+   BODY
+========================= */
+
+.editor-body {
+  /* padding: 24px 24px 28px; */
+  margin-bottom: 50px;
+}
+
+.editor-inner {
+  /* max-width: 700px; */
+  margin: 0 auto;
+  padding: 10px;
+}
+
+/* =========================
+   FIELD GROUPS
+========================= */
+
+.field-group {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+
+.system-field {
+  opacity: 0.85;
+}
+
+/* =========================
+   LABELS
+========================= */
+
+.field-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* =========================
+   TEXTAREA (AUTO-GROW)
+========================= */
+
+.field-textarea {
+  width: 100%;
+  resize: none;  
+  overflow: hidden;  
+  min-height: 36px;
+  padding: 15px 0px 0px 10px;
+  font-size: 0.9rem;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #111827;
+  line-height: 1.5;
+}
+
+.field-textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.field-textarea:disabled {
+  background: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* =========================
+   OBJECT SECTIONS
+========================= */
+
+.object-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.object-block {
+  border-left: 3px solid #d1d5fe;
+  padding-left: 10px;
+  margin-top: 6px;
+}
+
+/* =========================
+   SAVE
+========================= */
+
+.save-section {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 18px;
+  margin-top: 10px;
+  border-top: 1px dashed #e5e7eb;
+}
+
+.btn-save {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  color: #ffffff;
+  padding: 14px 22px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 6px 16px rgba(22, 163, 74, 0.35);
+}

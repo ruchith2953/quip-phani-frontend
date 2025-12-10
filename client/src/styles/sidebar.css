@@ -1,0 +1,109 @@
+/* .sidebar-container {
+    padding: 16px;
+}
+
+.sidebar-title {
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 16px;
+}
+
+/* Button wrapper */
+/* .sidebar-item {
+    width: 100%;
+    text-align: left;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #f3f4f6;      
+    border: 1px solid transparent;
+    border-radius: 6px;
+   cursor: pointer;
+    transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.sidebar-item:hover {
+    background-color: #e5e7eb;       
+    border-color: #d1d5db;           
+}
+
+.sidebar-item-title {
+    font-weight: 600;
+    color: #1f2937;               
+}
+
+.sidebar-item-path {
+    font-size: 11px;
+    color: #6b7280;                  
+    word-break: break-all;
+    margin-top: 2px;
+}
+  */ 
+
+  .component-list {
+  width: 320px;
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  overflow-y: auto;
+}
+
+/* GROUP */
+.component-group {
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* ROOT HEADER */
+.component-group-title {
+  padding: 12px 16px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #1e293b;
+  background: #f8fafc;
+  cursor: pointer;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.component-group-title:hover {
+  background: #eef2ff;
+}
+
+/* ARROW */
+.arrow {
+  font-size: 0.7rem;
+  color: #475569;
+}
+
+/* ITEMS */
+.component-item {
+  padding: 12px 16px 12px 24px;
+  cursor: pointer;
+  border-top: 1px solid #f1f5f9;
+  transition: background 0.15s ease;
+}
+
+.component-item:hover {
+  background: #f8fafc;
+}
+
+.component-item.active {
+  background: #bbd8f9;;
+  border-left: 4px solid #2563eb;
+}
+
+/* TEXT */
+.component-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.component-path {
+  font-size: 0.7rem;
+  color: #6b7280;
+  margin-top: 3px;
+  word-break: break-all;
+}

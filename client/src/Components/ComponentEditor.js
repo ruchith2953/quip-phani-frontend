@@ -304,10 +304,6 @@ export default function ComponentEditor({
                   <th className="component-editor-custom-column">
                     Custom Data
                   </th>
-
-                  <th className="component-editor-status-column">
-                    Status
-                  </th>
                 </tr>
               </thead>
 
@@ -436,21 +432,6 @@ export default function ComponentEditor({
                               </button>
                             );
                           })()}
-                        </td>
-
-                        <td>
-                          <div className="component-editor-row-status">
-                            <span
-                              className={`component-editor-status-dot ${isSelected
-                                  ? "component-editor-status-dot-active"
-                                  : ""
-                                }`}
-                            />
-
-                            <span>
-                              {isSelected ? "Selected" : "Ready"}
-                            </span>
-                          </div>
                         </td>
                       </tr>
                     );

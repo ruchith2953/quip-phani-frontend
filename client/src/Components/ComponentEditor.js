@@ -3,6 +3,14 @@ import TouchAppOutlinedIcon from "@mui/icons-material/TouchAppOutlined";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import LayersOutlinedIcon from "@mui/icons-material/LayersOutlined";
 import ChevronRightOutlinedIcon from "@mui/icons-material/ChevronRightOutlined";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+
+import CustomDataDialog from "./CustomDataDialog";
+import {
+  describeEntry,
+  findCollisions,
+  mergeCustomData,
+} from "../Utils/customData";
 
 import "../styles/componentEditor.css";
 
@@ -57,11 +65,15 @@ const createSerializableCopy = (value) => {
 export default function ComponentEditor({
   components = [],
   pagePath = "",
+  customDataByRowId = {},
+  onChangeCustomData = () => {},
 }) {
   const [selectedComponentIds, setSelectedComponentIds] = useState([]);
+  const [editingRowId, setEditingRowId] = useState(null);
 
   useEffect(() => {
     setSelectedComponentIds([]);
+    setEditingRowId(null);
   }, [components, pagePath]);
 
   const componentsWithIds = useMemo(() => {
@@ -71,13 +83,25 @@ export default function ComponentEditor({
     }));
   }, [components]);
 
-  const selectedComponents = useMemo(() => {
+  const selectedEntries = useMemo(() => {
     const selectedIds = new Set(selectedComponentIds);
 
-    return componentsWithIds
-      .filter(({ componentId }) => selectedIds.has(componentId))
-      .map(({ component }) => component);
+    return componentsWithIds.filter(({ componentId }) =>
+      selectedIds.has(componentId)
+    );
   }, [componentsWithIds, selectedComponentIds]);
+
+  const selectedComponents = useMemo(() => {
+    return selectedEntries.map(({ component }) => component);
+  }, [selectedEntries]);
+
+  const editingRow = useMemo(() => {
+    return (
+      componentsWithIds.find(
+        ({ componentId }) => componentId === editingRowId
+      ) ?? null
+    );
+  }, [componentsWithIds, editingRowId]);
 
   const selectedCount = selectedComponents.length;
 
@@ -124,14 +148,19 @@ export default function ComponentEditor({
     handleComponentSelection(componentId);
   };
 
-  const pushToAdobeDataLayer = (eventName, dataKey) => {
-    if (selectedComponents.length === 0) {
+  const pushToAdobeDataLayer = (eventName) => {
+    if (selectedEntries.length === 0) {
       return;
     }
 
     window.adobeDataLayer = window.adobeDataLayer || [];
 
-    const selectedRows = createSerializableCopy(selectedComponents);
+
+    const selectedRows = createSerializableCopy(
+      selectedEntries.map(({ component, componentId }) =>
+        mergeCustomData(component, customDataByRowId[componentId])
+      )
+    );
 
     const payload = {
       event: eventName,
@@ -150,17 +179,16 @@ export default function ComponentEditor({
   };
 
   const handleTestClickInteraction = () => {
-    pushToAdobeDataLayer(
-      "button.click",
-      "components"
-    );
+    pushToAdobeDataLayer("button.click");
   };
 
   const handleTestPageView = () => {
-    pushToAdobeDataLayer(
-      "Pageview",
-      "pages"
-    );
+    pushToAdobeDataLayer("Pageview");
+  };
+
+  const handleSaveCustomData = (entry) => {
+    onChangeCustomData(editingRowId, entry);
+    setEditingRowId(null);
   };
 
   return (
@@ -273,6 +301,10 @@ export default function ComponentEditor({
                     Component Path
                   </th>
 
+                  <th className="component-editor-custom-column">
+                    Custom Data
+                  </th>
+
                   <th className="component-editor-status-column">
                     Status
                   </th>
@@ -364,6 +396,48 @@ export default function ComponentEditor({
                           </span>
                         </td>
 
+                        <td
+                          className="component-editor-custom-cell"
+                          onClick={(event) => event.stopPropagation()}
+                        >
+                          {(() => {
+                            const entry = customDataByRowId[componentId];
+                            const hasCollision =
+                              findCollisions(component, entry).length > 0;
+
+                            return (
+                              <button
+                                type="button"
+                                className={`component-editor-custom-button ${
+                                  entry
+                                    ? "component-editor-custom-button--set"
+                                    : ""
+                                }`}
+                                aria-label={`Custom data for ${getComponentName(
+                                  component
+                                )}`}
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  setEditingRowId(componentId);
+                                }}
+                              >
+                                <span className="component-editor-custom-label">
+                                  {describeEntry(entry)}
+                                </span>
+
+                                {hasCollision && (
+                                  <span
+                                    className="component-editor-custom-warning-dot"
+                                    title="Overwrites an existing field on this component"
+                                  />
+                                )}
+
+                                <EditOutlinedIcon fontSize="small" />
+                              </button>
+                            );
+                          })()}
+                        </td>
+
                         <td>
                           <div className="component-editor-row-status">
                             <span
@@ -446,6 +520,17 @@ export default function ComponentEditor({
           </div>
         </div>
       )}
+
+      <CustomDataDialog
+        open={editingRow !== null}
+        componentName={
+          editingRow ? getComponentName(editingRow.component) : ""
+        }
+        row={editingRow?.component}
+        entry={editingRowId ? customDataByRowId[editingRowId] : undefined}
+        onCancel={() => setEditingRowId(null)}
+        onSave={handleSaveCustomData}
+      />
     </section>
   );
 }

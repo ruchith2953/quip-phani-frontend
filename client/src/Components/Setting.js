@@ -16,11 +16,11 @@ import ConfirmDialog from "./ConfirmDialog";
 export default function SettingsPage() {
     const navigate = useNavigate();
     const [domainUrl, setDomainUrl] = useState("");
-     const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(false);
     const [snackbarMessage, setSnackBarMessage] = useState("");
     const [status, setStatus] = useState("success");
     const [columns, setColumns] = useState([]);
-    const [rowData,setRowData]=useState();
+    const [rowData, setRowData] = useState();
     const [mapperFile, setMapperFile] = useState(null);
     const [selectedDomainToDelete, setSelectedDomainToDelete] = useState(null);
     const [confirmOpen, setConfirmOpen] = useState(false);
@@ -29,19 +29,19 @@ export default function SettingsPage() {
         fetchDomains();
     }, []);
 
-   const fetchDomains = async() => {
+    const fetchDomains = async () => {
         try {
-            const domainResponse= await axios.get("/proxy/content/getAllDomains");
-            if(domainResponse?.data?.domains?.length>0){
+            const domainResponse = await axios.get("http://localhost:9091/content/getAllDomains");
+            if (domainResponse?.data?.domains?.length > 0) {
                 setColumns(extractColumns(domainResponse?.data || {}));
                 setRowData(domainResponse?.data?.domains || []);
-            }else{
+            } else {
                 setColumns([]);
                 setRowData([]);
             }
         } catch (error) {
-            console.log("fetch Domains",error);
-            
+            console.log("fetch Domains", error);
+
         }
     };
     const handleCreateDomain = async () => {
@@ -68,7 +68,7 @@ export default function SettingsPage() {
         formData.append("mapperFile", mapperFile);
 
         try {
-            const response = await axios.post("/proxy/content/createDomain",formData,{ headers: {"Content-Type": "multipart/form-data"} });
+            const response = await axios.post("http://localhost:9091/content/createDomain", formData, { headers: { "Content-Type": "multipart/form-data" } });
             if (response.data?.status === "success") {
                 setSnackBarMessage(response.data.response || "Domain created successfully");
                 setStatus("success");
@@ -97,8 +97,8 @@ export default function SettingsPage() {
         setConfirmOpen(true);
     };
 
-    const handleDeleteDomainApi=(data)=>{
-        console.log("handle delete domain function",data)
+    const handleDeleteDomainApi = (data) => {
+        console.log("handle delete domain function", data)
     }
 
     function extractColumns(data) {
@@ -149,86 +149,86 @@ export default function SettingsPage() {
 
     return (
         <div className="Dashboard-setting">
-            <Header/>
-        <div className="settings-container">
-            <div>
-            <div className="top-wrapper">
-                <div className="left-group">
-                    <input
-                        type="text"
-                        placeholder="Enter domain URL"
-                        value={domainUrl}
-                        onChange={e => setDomainUrl(e.target.value)}
-                        className="domain-input"
-                    />
-                     <label className="upload-btn">
-                          <CloudUploadIcon />
-                        <input
-                            type="file"
-                            accept=".xlsx"
-                            hidden
-                            onChange={(e) => {
-                                const file = e.target.files[0];
-                                setMapperFile(file || null);
-                            }}
-                        />
-                    </label>
-                    
-                    <button className="create-btn" onClick={handleCreateDomain}>
-                        Create Domain
-                    </button>
-                </div>
+            <Header />
+            <div className="settings-container">
+                <div>
+                    <div className="top-wrapper">
+                        <div className="left-group">
+                            <input
+                                type="text"
+                                placeholder="Enter domain URL"
+                                value={domainUrl}
+                                onChange={e => setDomainUrl(e.target.value)}
+                                className="domain-input"
+                            />
+                            <label className="upload-btn">
+                                <CloudUploadIcon />
+                                <input
+                                    type="file"
+                                    accept=".xlsx"
+                                    hidden
+                                    onChange={(e) => {
+                                        const file = e.target.files[0];
+                                        setMapperFile(file || null);
+                                    }}
+                                />
+                            </label>
 
-                <div className="right-group">
-                    <button className="back-btn" onClick={() => navigate("/")}>
-                         Back to Home
-                    </button>
+                            <button className="create-btn" onClick={handleCreateDomain}>
+                                Create Domain
+                            </button>
+                        </div>
+
+                        <div className="right-group">
+                            <button className="back-btn" onClick={() => navigate("/")}>
+                                Back to Home
+                            </button>
+                        </div>
+
+                    </div>
+                    {mapperFile && (
+                        <span className="file-name">
+                            {mapperFile.name}
+                        </span>
+                    )}
                 </div>
-                
+                <Paper sx={{ height: 400, width: "100%", marginTop: "35px" }}>
+                    <DataGrid
+                        rows={rowData}
+                        columns={columns}
+                        pageSizeOptions={[5, 10]}
+                        checkboxSelection={false}
+                        disableRowSelectionOnClick
+                        sx={{ border: 0 }}
+                        isCellEditable={() => false}
+                    />
+                </Paper>
             </div>
-            {mapperFile && (
-                <span className="file-name">
-                    {mapperFile.name}
-                </span>
-            )}
-       </div>
-            <Paper sx={{ height: 400, width: "100%" ,marginTop:"35px"}}>
-                <DataGrid
-                    rows={rowData}
-                    columns={columns}
-                    pageSizeOptions={[5, 10]}
-                    checkboxSelection={false} 
-                    disableRowSelectionOnClick
-                    sx={{ border: 0 }}
-                    isCellEditable={() => false}
-                />
-            </Paper>
-        </div>
-        <Snackbar
-              open={open}
-              autoHideDuration={3000}
-              onClose={() => setOpen(false)}
-              sx={{zIndex : 9999}}
-              anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            <Snackbar
+                open={open}
+                autoHideDuration={3000}
+                onClose={() => setOpen(false)}
+                sx={{ zIndex: 9999 }}
+                anchorOrigin={{ vertical: "top", horizontal: "center" }}
             >
-            <Alert severity={status} onClose={() => setOpen(false)} variant="filled">
-                      {snackbarMessage}
-            </Alert>
+                <Alert severity={status} onClose={() => setOpen(false)} variant="filled">
+                    {snackbarMessage}
+                </Alert>
             </Snackbar>
-                         
-        <ConfirmDialog
-            open={confirmOpen}
-            // title="Delete Domain"
-            mode="error"
-            domainData={selectedDomainToDelete}  
-            onCancel={() => {
-                setConfirmOpen(false);
-                setSelectedDomainToDelete(null);
-            }}
-            action={"Delete"}
-            onHandleDelete={handleDeleteDomainApi}
-        />
-        <Footer/>
+
+            <ConfirmDialog
+                open={confirmOpen}
+                // title="Delete Domain"
+                mode="error"
+                domainData={selectedDomainToDelete}
+                onCancel={() => {
+                    setConfirmOpen(false);
+                    setSelectedDomainToDelete(null);
+                }}
+                action={"Delete"}
+                onHandleDelete={handleDeleteDomainApi}
+            />
+            <Footer />
         </div>
     );
 }

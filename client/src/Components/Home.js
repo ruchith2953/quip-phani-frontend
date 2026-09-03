@@ -1,213 +1,298 @@
-import {Cog6ToothIcon,ArrowRightCircleIcon} from "@heroicons/react/24/outline";
-import CloseIcon from '@mui/icons-material/Close';
+import React, { useState } from "react";
+import { ArrowRightCircleIcon } from "@heroicons/react/24/outline";
 import { Alert, Snackbar } from "@mui/material";
-import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-import "../styles/Home.css";
-import "../styles/Setting.css";
-import Footer from "../Pages/Footer";
 import Header from "../Pages/Header";
+import Footer from "../Pages/Footer";
 
+import "../styles/Home.css";
 
 export default function HomePage() {
     const navigate = useNavigate();
-    const [domains, setDomains] = useState([]);
+
+    const [domainUrl, setDomainUrl] = useState("");
+
     const [loading, setLoading] = useState(false);
-    const [loadingMessage,setLoadingMessage]=useState("loading");
-    const [showModal, setShowModal] = useState(false);
-    const [selectedDomain, setSelectedDomain] = useState();
-    const [inputValue, setInputValue] = useState("");
+    const [loadingMessage, setLoadingMessage] = useState("");
+
     const [open, setOpen] = useState(false);
-    const [snackbarMessage, setSnackBarMessage] = useState("");
+    const [snackbarMessage, setSnackbarMessage] = useState("");
     const [status, setStatus] = useState("success");
 
-
-    let getAllDomains = {
-    "domains": [
-        {
-            "domainName": "nrbank",
-            "domainUrl": "https://nrbank.p.cwcm-admp.com",
-            "updatedAt": "2025-12-01T11:23:38.857507400Z",
-            "id": "6926cf690d84d3342bc96a2b"
-        },
-        {
-            "domainName": "qulipta",
-            "domainUrl": "https://qulipta.p.cwcm-admp.com",
-            "id": "692974b01dce44de94391b29"
-        },
-        {
-            "domainName": "psoriasis",
-            "domainUrl": "https://psoriasis.p.cwcm-admp.com",
-            "id": "692d682ec8c30fc9703826f1"
-        }
-    ]
-};
-
-
-    useEffect(() => {
-        fetchDomains();
-    }, []);
-
-   async function fetchDomains() {
-    setLoadingMessage("Loading Domains please wait ...");
-    try {
-        setLoading(true)
-        const response = await axios.get('/proxy/content/getAllDomains'); 
-        
-        if(response?.data?.domains?.length > 0){
-        setDomains(response?.data?.domains || []);
-        setLoading(false)
-        setSnackBarMessage(`Domains fetched successfully.`);
-        setStatus("success");
+    const showMessage = (
+        message,
+        severity = "success"
+    ) => {
+        setSnackbarMessage(message);
+        setStatus(severity);
         setOpen(true);
-        return response?.data || [];  
-        }else{
-        setDomains([])
-        setLoading(false)
-        setSnackBarMessage(response?.data?.errorMessage);
-        setStatus("error");
-        setOpen(true);
-        }
-        setLoadingMessage("");
-    } catch (error) {
-        setLoading(false)
-        setSnackBarMessage(`Error: ${error.message}`);
-        setStatus("error");
-        setOpen(true);
-        console.error('Error fetching domains:', error);
-        setLoadingMessage("");
-    }
-    }
-
-    const openModal = (domain) => {
-        setSelectedDomain(domain);
-        setInputValue("");
-        setSnackBarMessage("")
-        setShowModal(true);
-        
-    };
-    const closeModal = () => {
-        setShowModal(false);
-        setSelectedDomain(null);
     };
 
-    async function handleDomainIngestion() {
-        setLoadingMessage("Ingestion in progress please await...")
-        const path = inputValue;
-        try {
-            if (!inputValue.trim()) {
-            closeModal();
-            setSnackBarMessage("Content path cannot be empty.");
-            setStatus("error");
-            setOpen(true);
+    async function handleDomainExtraction() {
+        const url = domainUrl.trim();
+
+        if (!url) {
+            showMessage(
+                "Please enter a domain URL.",
+                "error"
+            );
             return;
         }
-        setLoading(true);
-            const path = inputValue;
-            const selectedUrl = selectedDomain.domainUrl;
-            const userEmail="sravan@nextrow.com";
-            const response= await axios.get(`/proxy/content/ingestAemData?userEmail=${userEmail}&domainUrl=${selectedUrl}`);
-            if(response.data.status==="success"){
-                setLoading(false)
-                navigate("/home/datapreview", {
-                    state: { selectedDomain, path }
-                });
-            }else{
-                setLoading(false);
-                setSnackBarMessage(response?.data?.errorMessage);
-                setOpen(true);
-                navigate("/home/datapreview",{state:{selectedDomain,path}});
-                setStatus("error");
-            }
-            setLoadingMessage("");
+
+        try {
+            setLoading(true);
+            setLoadingMessage(
+                "Starting domain extraction..."
+            );
+
+            const response = await axios.get(
+                "http://localhost:9091/content/ingestAemData",
+                {
+                    params: {
+                        userEmail: "ruchithk@nextrow.com",
+                        domainUrl: url,
+                    },
+                }
+            );
+
+            console.log(
+                "Ingestion Response:",
+                response.data
+            );
+
+            navigate("/home/datapreview", {
+                state: {
+                    domainUrl: url,
+                },
+            });
         } catch (error) {
-            closeModal();
+            console.error(
+                "Ingestion API Error:",
+                error
+            );
+
+            navigate("/home/datapreview", {
+                state: {
+                    domainUrl: url,
+                },
+            });
+        } finally {
             setLoading(false);
             setLoadingMessage("");
-            navigate("/home/datapreview",{state:{selectedDomain,path}});
-            console.log("ingestion error",error); 
-        } 
+        }
     }
 
+    const handleKeyPress = (event) => {
+        if (event.key === "Enter") {
+            handleDomainExtraction();
+        }
+    };
+
     return (
-        <div className="Dashboard-setting">
-           
-         <Header/>   
-        <div className="page-container">
-            <div>
-                <div className="header-section">
-                    Content Authoring Workspace
-                </div>
+        <div className="home-page">
+            <Header />
 
-                 {/* <button onClick={()=>{
-                handleUpdateAem()
-            }}>updateAEM</button> */}
+            <main className="home-main">
+                <section className="home-hero">
 
-                <button className="settings-btn" onClick={() => navigate('/settings')}>
-                    <Cog6ToothIcon className="settings-icon" />
-                </button>
-            </div>
-            
-            {loading ? (
-                <div className="loading-overlay">
-                    <div className="spinner"></div>
-                    <p style={{color:"white"}}>{loadingMessage}</p>
-                </div>
-            ) : domains.length === 0 ? (
-                <p className="empty-text">No domains registered.</p>
-            ) : (
-                <div className="domain-grid">
-                    {domains.map((domain) => (
-                        <div key={domain.id} onClick={() => openModal(domain)} className="domain-card">
-                            <div className="domain-card-header">
-                                <h2 className="domain-name">{domain.domainName}</h2>
-                                <ArrowRightCircleIcon className="domain-arrow" />
+                    <div className="home-hero-badge">
+                        <span className="home-hero-badge-dot" />
+                        Content Authoring Workspace
+                    </div>
+
+                    <h1 className="home-hero-title">
+                        Bring your content into
+                        <span className="home-hero-title-accent">
+                            {" "}one workspace.
+                        </span>
+                    </h1>
+
+                    <p className="home-hero-description">
+                        Connect your domain to discover pages and
+                        components, then manage your content structure
+                        from a single authoring workspace.
+                    </p>
+
+                    <div className="home-domain-card">
+
+                        <div className="home-domain-card-header">
+                            <div className="home-domain-card-heading">
+                                <span className="home-domain-card-eyebrow">
+                                    GET STARTED
+                                </span>
+
+                                <h2 className="home-domain-card-title">
+                                    Connect a domain
+                                </h2>
+
+                                <p className="home-domain-card-description">
+                                    Enter the domain you want to inspect
+                                    and extract its content structure.
+                                </p>
                             </div>
-                            <p className="domain-url">
-                                    {domain.domainUrl}
+
+                            <div className="home-domain-card-indicator">
+                                <span className="home-domain-card-indicator-dot" />
+                                Ready
+                            </div>
+                        </div>
+
+                        <div className="home-domain-form">
+
+                            <label
+                                htmlFor="domain-url"
+                                className="home-domain-label"
+                            >
+                                Domain URL
+                            </label>
+
+                            <div className="home-domain-input-row">
+
+                                <div className="home-domain-input-wrapper">
+                                    <input
+                                        id="domain-url"
+                                        type="text"
+                                        value={domainUrl}
+                                        onChange={(event) =>
+                                            setDomainUrl(
+                                                event.target.value
+                                            )
+                                        }
+                                        onKeyDown={handleKeyPress}
+                                        placeholder="https://your-domain.com"
+                                        className="home-domain-input"
+                                        disabled={loading}
+                                        autoComplete="url"
+                                    />
+                                </div>
+
+                                <button
+                                    type="button"
+                                    onClick={
+                                        handleDomainExtraction
+                                    }
+                                    disabled={loading}
+                                    className="home-domain-submit"
+                                >
+                                    <span>
+                                        Extract & Continue
+                                    </span>
+
+                                    <ArrowRightCircleIcon className="home-domain-submit-icon" />
+                                </button>
+
+                            </div>
+
+                            <p className="home-domain-helper">
+                                Press Enter to continue
                             </p>
-                        </div>
-                    ))}
-                </div>
-            )}
 
-            {showModal && (
-                <div className="modal-overlay">
-                    <div className="modal-box">
-                        <button className="modal-close-btn" onClick={closeModal}>
-                            <CloseIcon className="modal-close-icon" />
-                        </button>
-                        <div className="modal-header">
-                            <h2 className="modal-title">{selectedDomain.domainName}</h2>
                         </div>
-                        <label className="modal-label">Content Path / Page Path</label>
-                        <div className="modal-input-wrapper">
-                            <input type="text" placeholder="e.g. /content/site/en/page" className="modal-input" value={inputValue} onChange={(e) => setInputValue(e.target.value)}/>
+                    </div>
+
+                    <div className="home-workflow">
+
+                        <div className="home-workflow-item">
+                            <span className="home-workflow-number">
+                                01
+                            </span>
+
+                            <div className="home-workflow-copy">
+                                <strong>
+                                    Connect
+                                </strong>
+
+                                <span>
+                                    Enter your domain
+                                </span>
+                            </div>
                         </div>
 
-                        <button onClick={handleDomainIngestion} className="modal-submit-btn">
-                            <ArrowRightCircleIcon className="modal-submit-icon" />
-                            <span>Extract & Continue</span>
-                        </button>
+                        <div className="home-workflow-line" />
+
+                        <div className="home-workflow-item">
+                            <span className="home-workflow-number">
+                                02
+                            </span>
+
+                            <div className="home-workflow-copy">
+                                <strong>
+                                    Extract
+                                </strong>
+
+                                <span>
+                                    Discover content
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="home-workflow-line" />
+
+                        <div className="home-workflow-item">
+                            <span className="home-workflow-number">
+                                03
+                            </span>
+
+                            <div className="home-workflow-copy">
+                                <strong>
+                                    Author
+                                </strong>
+
+                                <span>
+                                    Explore components
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </section>
+            </main>
+
+            <Snackbar
+                open={open}
+                autoHideDuration={2500}
+                onClose={() => setOpen(false)}
+                anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "center",
+                }}
+                className="home-snackbar"
+            >
+                <Alert
+                    severity={status}
+                    variant="filled"
+                    onClose={() => setOpen(false)}
+                >
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
+
+            <Footer />
+
+            {loading && (
+                <div className="home-loading-overlay">
+                    <div className="home-loading-card">
+
+                        <div className="home-loading-spinner">
+                            <span />
+                        </div>
+
+                        <div className="home-loading-content">
+                            <strong>
+                                Preparing workspace
+                            </strong>
+
+                            <span>
+                                {loadingMessage}
+                            </span>
+                        </div>
+
                     </div>
                 </div>
             )}
-        </div>
-        <Snackbar
-              open={open}
-              autoHideDuration={2000}
-              sx={{zIndex: 99999}}
-              onClose={() => setOpen(false)}
-              anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-            <Alert severity={status} onClose={() => setOpen(false)} variant="filled">
-                      {snackbarMessage}
-            </Alert>
-            </Snackbar>
-        <Footer/>
-        
         </div>
     );
 }

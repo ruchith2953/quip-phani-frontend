@@ -1,32 +1,21 @@
 import React from "react";
-// import logo from "../assets/logo.png"; // update this path if needed
-// import config from "../config";       // update this path if needed
-import "../styles/footer.css";               // if you have footer styles
+import "../styles/footer.css";
 
 export default function Footer() {
   return (
-    <footer className="dashboard-footer">
-      <nav>
-        <ul
-          style={{
-            display: "flex",
-            listStyleType: "none",
-            padding: 0,
-            margin: 0,
-          }}
-        >
-          <li style={{ marginRight: "20px" }}>
-            <a
-            //   href={config?.data?.MLR_HOME || "#"}
-              style={{ color: "inherit", textDecoration: "none" }}
-            >
-              Quip Author
-            </a>
-          </li>
-        </ul>
-      </nav>
+    <footer className="quip-footer">
+      <div className="quip-footer__inner">
+        <span className="quip-footer__copyright">
+          © {new Date().getFullYear()} Quip
+        </span>
 
-      {/* <img src={logo} alt="Company Logo" className="footer-logo" /> */}
+        <span className="quip-footer__separator">•</span>
+
+        <span className="quip-footer__author">
+          Quip Phani
+        </span>
+      </div>
     </footer>
   );
 }
+

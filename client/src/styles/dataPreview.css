@@ -1,70 +1,362 @@
-.editor-main {
-    margin-top: 5%;
-}
+/* ======================================================
+   PAGE
+====================================================== */
 
-/* ===== PAGE LAYOUT ===== */
-
-.editing-main-page {
+.quip-preview-page {
   min-height: 100vh;
+  background: #f5f7fb;
   display: flex;
   flex-direction: column;
-  background: #f8fafc;
 }
 
-.editor-main {
+/* ======================================================
+   DOMAIN BAR
+====================================================== */
+
+.quip-preview-domain-bar {
+  height: 84px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 28px;
+}
+
+.quip-preview-domain-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.quip-preview-back-button {
+  width: 42px;
+  height: 42px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #f3f4f6;
+  color: #374151;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: 0.2s ease;
+}
+
+.quip-preview-back-button:hover {
+  background: #e5e7eb;
+}
+
+.quip-preview-domain-icon {
+  width: 52px;
+  height: 52px;
+
+  border-radius: 14px;
+
+  background: linear-gradient(135deg,
+      #2563eb,
+      #3b82f6);
+
+  color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quip-preview-domain-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.quip-preview-domain-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+
+  color: #9ca3af;
+}
+
+.quip-preview-domain-name {
+  margin-top: 4px;
+
+  font-size: 20px;
+  font-weight: 700;
+
+  color: #111827;
+}
+
+.quip-preview-domain-meta {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+
+  background: #ffffff;
+}
+
+.quip-preview-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.quip-preview-stat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  color: #374151;
+}
+
+.quip-preview-stat strong {
+  color: #111827;
+  font-size: 15px;
+}
+
+.quip-preview-stat-divider {
+  width: 1px;
+  height: 26px;
+  background: #e5e7eb;
+}
+
+/* ======================================================
+   WORKSPACE
+====================================================== */
+
+.quip-preview-workspace {
   flex: 1;
   display: flex;
-  height: calc(100vh - 120px);
   overflow: hidden;
 }
 
-/* ===== LEFT SIDEBAR ===== */
+/* ======================================================
+   EDITOR
+====================================================== */
 
-.component-list {
-  max-height: 660px;
-  width: 320px;
-  margin-bottom: 70px;
-  background: #ffffff;
-  border-right: 1px solid #e5e7eb;
-  overflow-y: auto;
-}
-
-.component-item {
-  padding: 14px 16px;
-  cursor: pointer;
-  border-bottom: 1px solid #f1f5f9;
-  transition: background 0.2s ease, border-left 0.2s ease;
-}
-
-.component-item:hover {
-  background: #f8fafc;
-}
-
-.component-item.active {
-  background: #eef6ff;
-  border-left: 4px solid #2563eb;
-}
-
-.component-title {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #1f2937;
-}
-
-.component-path {
-  font-size: 0.75rem;
-  color: #6b7280;
-  margin-top: 4px;
-  word-break: break-all;
-}
-
-/* ===== RIGHT EDITOR PANEL ===== */
-
-.editor-console {
-  max-height: 650px;
+.quip-preview-editor {
   flex: 1;
-  padding: 10px;
-  overflow-y: auto;
-  background: #f9fafb;
+  background: #ffffff;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
 }
 
+.quip-preview-editor-header {
+  padding: 24px 28px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.quip-preview-editor-heading {
+  display: flex;
+  flex-direction: column;
+}
+
+.quip-preview-editor-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+
+  color: #9ca3af;
+  text-transform: uppercase;
+}
+
+.quip-preview-editor-title {
+  margin-top: 6px;
+
+  font-size: 24px;
+  font-weight: 700;
+
+  color: #111827;
+
+  max-width: 850px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.quip-preview-component-count {
+  min-width: 110px;
+  height: 42px;
+
+  padding: 0 14px;
+
+  background: #eff6ff;
+  color: #2563eb;
+
+  border-radius: 999px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  font-weight: 600;
+}
+
+.quip-preview-component-count span {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.quip-preview-editor-divider {
+  height: 1px;
+  background: #e5e7eb;
+}
+
+.quip-preview-editor-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+/* ======================================================
+   EMPTY STATE
+====================================================== */
+
+.quip-preview-no-page {
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.quip-preview-no-page-icon {
+  width: 90px;
+  height: 90px;
+
+  border-radius: 20px;
+
+  background: #eff6ff;
+
+  color: #2563eb;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 20px;
+}
+
+.quip-preview-no-page h2 {
+  margin: 0;
+  color: #111827;
+  font-size: 24px;
+}
+
+.quip-preview-no-page p {
+  margin-top: 10px;
+  color: #6b7280;
+
+  text-align: center;
+  max-width: 420px;
+}
+
+/* ======================================================
+   LOADING
+====================================================== */
+
+.quip-preview-loading {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(17, 24, 39, 0.5);
+
+  z-index: 99999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  backdrop-filter: blur(3px);
+}
+
+.quip-preview-loading-card {
+  width: 320px;
+
+  background: white;
+
+  border-radius: 18px;
+
+  padding: 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  box-shadow:
+    0 15px 40px rgba(0, 0, 0, 0.12);
+}
+
+.quip-preview-loading-spinner {
+  width: 48px;
+  height: 48px;
+
+  border-radius: 50%;
+
+  border: 4px solid #dbeafe;
+  border-top-color: #2563eb;
+
+  animation: quipPreviewSpin 0.8s linear infinite;
+}
+
+.quip-preview-loading-title {
+  margin-top: 18px;
+
+  font-size: 18px;
+  font-weight: 700;
+
+  color: #111827;
+}
+
+.quip-preview-loading-message {
+  margin-top: 8px;
+
+  color: #6b7280;
+  text-align: center;
+}
+
+@keyframes quipPreviewSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ======================================================
+   RESPONSIVE
+====================================================== */
+
+@media (max-width: 1024px) {
+  .quip-preview-domain-bar {
+    flex-direction: column;
+    height: auto;
+    padding: 20px;
+    gap: 16px;
+  }
+
+  .quip-preview-workspace {
+    flex-direction: column;
+  }
+
+  .quip-preview-editor-title {
+    max-width: 100%;
+  }
+}

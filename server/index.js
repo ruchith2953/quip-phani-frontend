@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 const proxyApiOptions = {
-    target: process.env.EXTRACTDATA || "http://135.237.40.183:9091",
+    target: process.env.EXTRACTDATA || "http://localhost:9091",
     changeOrigin: true,
     pathRewrite: {
         '^/proxy': '',

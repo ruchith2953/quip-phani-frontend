@@ -1,146 +1,84 @@
-import React, { useState } from "react";
-
-import {
-  ActionButton,
-  Flex,
-  Button,
-  Dialog,
-  Heading,
-  Content,
-  TooltipTrigger,
-  Tooltip,
-  Provider,
-  defaultTheme,
-} from "@adobe/react-spectrum";
-
+import React from "react";
+import { ActionButton, Flex, Provider, defaultTheme } from "@adobe/react-spectrum";
 import Home from "@spectrum-icons/workflow/Home";
-import LogOut from "@spectrum-icons/workflow/LogOut";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 import "../styles/header.css";
 
 const Header = ({
-  title,
-  onClick,
-  showHome = true,
+  title = "Dashboard",
   secondaryTitle,
-  showLogout = true,
+  showHome = true,
 }) => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    console.log("log out triggered");
-    // const res = await axios.get("/getConfig");
-    // window.location.href = res.data.MLR_LINK;
-  };
-
-  const handleDialogClose = () => {
-    setIsDialogOpen(false);
-  };
-
-  const handleHomeClick = async () => {
-    console.log("home triggered");
-    // const res = await axios.get("/getConfig");
-    // window.location.href = res.data.MLR_HOME;
+  const handleHomeClick = () => {
+    navigate("/");
   };
 
   return (
-    <header className="header-component">
-      <Flex
-        justifyContent="space-between"
-        alignItems="center"
-        height="size-800"
-      >
-        <Flex alignItems="center" gap="size-200">
-          <ActionButton
-            onPress={handleHomeClick}
-            UNSAFE_style={{
-              paddingTop: "4px",
-              height: "30px",
-              width: "50px",
-              border: "none",
-              fill: "white",
-            }}
-          >
-            {showHome && <Home UNSAFE_className="bell_icon" />}
-          </ActionButton>
-        </Flex>
-        <span
-          style={{
-            alignContent: "center",
-            cursor: onClick ? "pointer" : null,
-            textAlign: "left",
-            fontSize: "25px",
-          }}
-        >
-          {/* {title} */}
-          <span style={{ fontWeight: "bold" }}>Quip </span>{" "}
-          <span style={{ fontSize: "20px" }}>
-            - Author
-          </span>
-        </span>
+    <Provider theme={defaultTheme} colorScheme="light">
+      <header className="quip-header">
+        <div className="quip-header__inner">
 
-        <Flex alignItems="center" gap="size-300">
-          {/* <span
-            style={{
-              alignContent: "center",
-              cursor: onClick ? "pointer" : null,
-              textAlign: "left",
-              marginRight: "20px",
-            }}
-            onClick={onClick}>
-            {secondaryTitle}
-          </span> */}
+          {/* LEFT — HOME + BRAND */}
+          <div className="quip-header__left">
 
-          <Provider theme={defaultTheme} colorScheme="dark">
-            <TooltipTrigger offset={15}>
+            {showHome && (
               <ActionButton
-                onPress={handleLogout}
-                UNSAFE_style={{
-                  paddingTop: "4px",
-                  height: "30px",
-                  width: "50px",
-                  fill: "white",
-                  border: "none",
-                  background: "none",
-                  backgroundColor: "#071d49",
-                  boxShadow: "none",
-                }}
+                onPress={handleHomeClick}
+                isQuiet
+                aria-label="Home"
+                UNSAFE_className="quip-header__home-button"
               >
-                {showLogout && <LogOut />}
+                <Home size="S" />
               </ActionButton>
-              <Tooltip>Logout</Tooltip>
-            </TooltipTrigger>
-          </Provider>
-        </Flex>
-      </Flex>
+            )}
 
-      {isDialogOpen && (
-        <Dialog
-          onDismiss={handleDialogClose}
-          UNSAFE_style={{
-            position: "fixed",
+            <div className="quip-header__divider" />
 
-            right: "15px",
+            <div className="quip-header__brand">
+              <div className="quip-header__logo">
+                Q
+              </div>
 
-            top: "73px",
+              <div className="quip-header__brand-text">
+                <span className="quip-header__product">
+                  Quip
+                </span>
 
-            width: "250px",
+                <span className="quip-header__workspace">
+                  Phani
+                </span>
+              </div>
+            </div>
+          </div>
 
-            height: "350px",
+          {/* CENTER — PAGE TITLE */}
+          <div className="quip-header__page">
+            <span className="quip-header__page-title">
+              {title}
+            </span>
 
-            backgroundColor: "#132f64dd",
-          }}
-        >
-          <Heading>Notifications</Heading>
-          <Content>
-            <p>Your notifications will appear here.</p>
-            <Button variant="secondary" onPress={handleDialogClose}>
-              Close
-            </Button>
-          </Content>
-        </Dialog>
-      )}
-    </header>
+            {secondaryTitle && (
+              <>
+                <span className="quip-header__separator">
+                  /
+                </span>
+
+                <span className="quip-header__secondary">
+                  {secondaryTitle}
+                </span>
+              </>
+            )}
+          </div>
+
+          {/* RIGHT — INTENTIONALLY EMPTY */}
+          <div className="quip-header__right" />
+
+        </div>
+      </header>
+    </Provider>
   );
 };
 

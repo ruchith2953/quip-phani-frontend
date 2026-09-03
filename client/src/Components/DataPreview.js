@@ -1,102 +1,349 @@
-import React, { useEffect, useState } from "react";
-import Header from "../Pages/Header";
-import Footer from "../Pages/Footer";
-import "../styles/dataPreview.css";
-import ComponentEditor from "./ComponentEditor";
-import { useLocation } from "react-router-dom";
-import SideBar from "./SideBar";
+import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { Alert, Snackbar } from "@mui/material";
+import { useLocation, useNavigate } from "react-router-dom";
+import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
+import LayersOutlinedIcon from "@mui/icons-material/LayersOutlined";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+
+import Header from "../Pages/Header";
+import Footer from "../Pages/Footer";
+import SideBar from "./SideBar";
+import ComponentEditor from "./ComponentEditor";
+
+import "../styles/dataPreview.css";
+
+const getPagePath = (component) => {
+  return (
+    component?.path ||
+    component?.pagePath ||
+    component?.pagepath ||
+    component?.componentpath ||
+    component?.componentPath ||
+    "Unknown Path"
+  );
+};
 
 const DataPreview = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
 
+  const domainUrl = location?.state?.domainUrl || "";
+
+  const [components, setComponents] = useState([]);
+  const [selectedPagePath, setSelectedPagePath] = useState("");
   const [selectedComponent, setSelectedComponent] = useState(null);
-  const [componentData,setComponentData]=useState([]);
-  const location=useLocation();
-  const selectedCardFromRoute = location?.state?.selectedDomain || null;
-  const { selectedDomain, path } = location.state || {};
-  const [selectedCard,setSelectedCard]=useState(selectedCardFromRoute);
+
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
+
   const [open, setOpen] = useState(false);
-  const [snackbarMessage, setSnackBarMessage] = useState("");
+  const [snackbarMessage, setSnackbarMessage] = useState("");
   const [status, setStatus] = useState("success");
 
+  useEffect(() => {
+    loadComponents();
+  }, []);
 
-  useEffect(()=>{
-      exportComponents()
-  },[])
+  async function loadComponents() {
+    if (!domainUrl) {
+      navigate("/");
+      return;
+    }
 
- async function exportComponents(){
     try {
-      setLoading(true)
-      setLoadingMessage("Extracting Components Data...");
-      const response=await axios.get(`/proxy/content/exportComponentsToJSON?domainUrl=${selectedCard.domainUrl}&domainPath=${path}`);
-      if(response.data.components.length>0){
-        setComponentData(response.data.components);
-      }else{
-        setComponentData([])
-      setSnackBarMessage("No Component Data Avaliable for the Domain.")
-      setOpen(true);
-      setStatus("error");
+      setLoading(true);
+      setLoadingMessage("Extracting components...");
+
+      const response = await axios.get(
+        "http://localhost:9091/content/exportComponentsToJSON",
+        {
+          params: {
+            domainUrl,
+            userName: "ruchithk@nextrow.com",
+          },
+        }
+      );
+
+      console.log(
+        "Export Components Response",
+        response.data
+      );
+
+      const data = response?.data?.components || [];
+
+      setComponents(data);
+
+      if (data.length > 0) {
+        const firstPath = getPagePath(data[0]);
+
+        setSelectedPagePath(firstPath || "");
+      } else {
+        showSnackbar(
+          "No components were found for this domain.",
+          "error"
+        );
       }
     } catch (error) {
-      setSnackBarMessage("Api unable to Fetch the Data Try Again.")
-      setOpen(true);
-      setStatus("error");
-      console.log("error exportComponents ",error);
-    }finally{
-    setLoading(false);
-    setLoadingMessage("");
+      console.error(error);
+
+      showSnackbar(
+        "Unable to load components.",
+        "error"
+      );
+    } finally {
+      setLoading(false);
+      setLoadingMessage("");
     }
   }
 
-  return (
-    <div className="editing-main-page">
-      <Header />
+  const showSnackbar = (message, severity = "success") => {
+    setSnackbarMessage(message);
+    setStatus(severity);
+    setOpen(true);
+  };
 
-      <div className="editor-main">
-        {/* side bar code  */}
-        <SideBar
-          components={componentData.components}
-          // components={componentData}
-          selectedComponent={selectedComponent}
-          onSelectComponent={(component) =>
-            setSelectedComponent(component)
-          }
-        />
-        {/* Editor Page Code */}
-        <div className="editor-console">
-          <ComponentEditor
-            component={selectedComponent}
-            currentDomainCardData={selectedCard}
-            onExtract={exportComponents}
-            setLoading={setLoading}
-            setLoadingMessage={setLoadingMessage}
-          />
-        </div>
-      </div>
-       <Snackbar
-          open={open}
-          autoHideDuration={2000}
-          sx={{zIndex: 99999}}
-          onClose={() => setOpen(false)}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+  const pagePaths = useMemo(() => {
+    return [
+      ...new Set(
+        components.map((item) => getPagePath(item))
+      ),
+    ];
+  }, [components]);
+
+  const filteredComponents = useMemo(() => {
+    return components.filter(
+      (item) =>
+        getPagePath(item) === selectedPagePath
+    );
+  }, [components, selectedPagePath]);
+
+  const formattedDomain = useMemo(() => {
+    if (!domainUrl) {
+      return "";
+    }
+
+    try {
+      return new URL(domainUrl).hostname;
+    } catch {
+      return domainUrl.replace(/^https?:\/\//, "");
+    }
+  }, [domainUrl]);
+
+  return (
+    <div className="quip-preview-page">
+
+      {/* =====================================================
+          APPLICATION HEADER
+      ====================================================== */}
+
+      <Header title="Domain Components" />
+
+      {/* =====================================================
+          DOMAIN CONTEXT BAR
+      ====================================================== */}
+
+      <section className="quip-preview-domain-bar">
+
+        <div className="quip-preview-domain-left">
+
+          <button
+            type="button"
+            className="quip-preview-back-button"
+            onClick={() => navigate("/")}
+            aria-label="Back to home"
           >
-          <Alert severity={status} onClose={() => setOpen(false)} variant="filled">
-                            {snackbarMessage}
-          </Alert>
-        </Snackbar>
+            <ArrowBackIcon />
+          </button>
+
+          <div className="quip-preview-domain-icon">
+            <LanguageOutlinedIcon />
+          </div>
+
+          <div className="quip-preview-domain-info">
+
+            <span className="quip-preview-domain-label">
+              DOMAIN
+            </span>
+
+            <span
+              className="quip-preview-domain-name"
+              title={domainUrl}
+            >
+              {formattedDomain}
+            </span>
+          </div>
+
+        </div>
+
+        <div className="quip-preview-domain-meta">
+
+          <div className="quip-preview-status">
+            <CheckCircleOutlineIcon />
+
+            <span>Connected</span>
+          </div>
+
+          <div className="quip-preview-stat-divider" />
+
+          <div className="quip-preview-stat">
+            <LayersOutlinedIcon />
+
+            <strong>
+              {components.length}
+            </strong>
+
+            <span>components</span>
+          </div>
+
+          <div className="quip-preview-stat-divider" />
+
+          <div className="quip-preview-stat">
+            <strong>
+              {pagePaths.length}
+            </strong>
+
+            <span>pages</span>
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* =====================================================
+          WORKSPACE
+      ====================================================== */}
+
+      <main className="quip-preview-workspace">
+
+        {/* PAGE SIDEBAR */}
+
+        <SideBar
+          pagePaths={pagePaths}
+          selectedPagePath={selectedPagePath}
+          onSelectPagePath={(pagePath) => {
+            setSelectedPagePath(pagePath);
+            setSelectedComponent(null);
+          }}
+        />
+
+        {/* EDITOR AREA */}
+
+        <section className="quip-preview-editor">
+
+          <div className="quip-preview-editor-header">
+
+            <div className="quip-preview-editor-heading">
+
+              <span className="quip-preview-editor-eyebrow">
+                PAGE
+              </span>
+
+              <h1
+                className="quip-preview-editor-title"
+                title={selectedPagePath}
+              >
+                {selectedPagePath || "No page selected"}
+              </h1>
+
+            </div>
+
+            <div className="quip-preview-component-count">
+              <span>
+                {filteredComponents.length}
+              </span>
+
+              {filteredComponents.length === 1
+                ? "component"
+                : "components"}
+            </div>
+
+          </div>
+
+          <div className="quip-preview-editor-divider" />
+
+          <div className="quip-preview-editor-content">
+
+            {selectedPagePath ? (
+              <ComponentEditor
+                components={filteredComponents}
+                selectedComponent={selectedComponent}
+                onSelectComponent={setSelectedComponent}
+              />
+            ) : (
+              <div className="quip-preview-no-page">
+                <div className="quip-preview-no-page-icon">
+                  <LayersOutlinedIcon />
+                </div>
+
+                <h2>Select a page</h2>
+
+                <p>
+                  Choose a page from the sidebar to
+                  inspect its components.
+                </p>
+              </div>
+            )}
+
+          </div>
+
+        </section>
+
+      </main>
+
+      {/* =====================================================
+          NOTIFICATION
+      ====================================================== */}
+
+      <Snackbar
+        open={open}
+        autoHideDuration={3000}
+        onClose={() => setOpen(false)}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+      >
+        <Alert
+          severity={status}
+          variant="filled"
+          onClose={() => setOpen(false)}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+
+      {/* =====================================================
+          FOOTER
+      ====================================================== */}
 
       <Footer />
-        {loading && (
-        <div className="loading-overlay">
-          <div className="spinner"></div>
-          <p style={{ color: "white", marginTop: "12px" }}>
-            {loadingMessage}
-          </p>
+
+      {/* =====================================================
+          LOADING
+      ====================================================== */}
+
+      {loading && (
+        <div className="quip-preview-loading">
+
+          <div className="quip-preview-loading-card">
+
+            <div className="quip-preview-loading-spinner" />
+
+            <div className="quip-preview-loading-title">
+              Extracting components
+            </div>
+
+            <div className="quip-preview-loading-message">
+              {loadingMessage}
+            </div>
+
+          </div>
+
         </div>
       )}
+
     </div>
   );
 };

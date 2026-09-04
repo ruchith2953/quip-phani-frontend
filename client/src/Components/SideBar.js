@@ -6,6 +6,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import "../styles/sidebar.css";
 
 export default function SideBar({
+  activeTab = "components",
+  onTabChange,
   pagePaths = [],
   selectedPagePath = "",
   onSelectPagePath,
@@ -30,6 +32,31 @@ export default function SideBar({
 
   return (
     <aside className="quip-page-sidebar">
+      {/* Dynamic Tabs */}
+      <div className="quip-page-sidebar__buttons">
+        <button
+          type="button"
+          className={`btn action-btn ${activeTab === "components" ? "is-selected" : ""}`}
+          onClick={() => onTabChange("components")}
+        >
+          Components
+        </button>
+        <button
+          type="button"
+          className={`btn action-btn ${activeTab === "pages" ? "is-selected" : ""}`}
+          onClick={() => onTabChange("pages")}
+        >
+          Pages
+        </button>
+        <button
+          type="button"
+          className={`btn action-btn ${activeTab === "forms" ? "is-selected" : ""}`}
+          onClick={() => onTabChange("forms")}
+        >
+          Forms
+        </button>
+      </div>
+
       {/* Header */}
       <div className="quip-page-sidebar__header">
         <div className="quip-page-sidebar__heading">

@@ -18,6 +18,76 @@
   border-right: 1px solid #e7eaf0;
 }
 
+/* ============================================================
+   Buttons
+   ============================================================ */
+
+/* Container */
+.quip-page-sidebar__buttons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 8px 0 16px;
+  box-sizing: border-box;
+  padding: 0.5em;
+}
+
+/* Base Button Structure */
+.quip-page-sidebar__buttons .action-btn {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 32px;
+  padding: 0 8px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  border-radius: 7px;
+  cursor: pointer;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* 1. NOT SELECTED (Default / Inactive) */
+.quip-page-sidebar__buttons .action-btn:not(.is-selected) {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+}
+
+.quip-page-sidebar__buttons .action-btn:not(.is-selected):hover {
+  background-color: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+/* 2. SELECTED (Active State) */
+.quip-page-sidebar__buttons .action-btn.is-selected {
+  background-color: #2563eb;
+  border: 1px solid #2563eb;
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.25);
+}
+
+.quip-page-sidebar__buttons .action-btn.is-selected:hover {
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+/* Accessibility Focus Ring */
+.quip-page-sidebar__buttons .action-btn:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
 
 /* ============================================================
    HEADER

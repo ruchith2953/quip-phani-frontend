@@ -15,6 +15,25 @@ import { isEmptyEntry } from "../Utils/customData";
 
 import "../styles/dataPreview.css";
 
+// Map tabs to their endpoints and loading text (swap URLs as needed)
+const TAB_CONFIG = {
+  components: {
+    endpoint: "http://localhost:9091/content/exportComponentsToJSON",
+    loadingText: "Extracting components...",
+    errorText: "No components were found for this domain.",
+  },
+  pages: {
+    endpoint: "http://localhost:9091/content/exportPagePropertiesV2", // updated endpoint for pages
+    loadingText: "Extracting pages...",
+    errorText: "No pages were found for this domain.",
+  },
+  forms: {
+    endpoint: "http://localhost:9091/content/getAemForms", // updated endpoint for forms
+    loadingText: "Extracting forms...",
+    errorText: "No forms were found for this domain.",
+  },
+};
+
 const getPagePath = (component) => {
   return (
     component?.path ||
@@ -32,9 +51,11 @@ const DataPreview = () => {
 
   const domainUrl = location?.state?.domainUrl || "";
 
+  // Active Tab State (Default: components)
+  const [activeTab, setActiveTab] = useState("components");
+
   const [components, setComponents] = useState([]);
   const [selectedPagePath, setSelectedPagePath] = useState("");
-
 
   const [customDataByRowId, setCustomDataByRowId] = useState({});
 
@@ -45,61 +66,63 @@ const DataPreview = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [status, setStatus] = useState("success");
 
+  // Load components initially
   useEffect(() => {
-    loadComponents();
+    loadData("components");
   }, []);
 
-  async function loadComponents() {
+  // 3. Dynamic fetcher based on active tab
+  async function loadData(tab = activeTab) {
     if (!domainUrl) {
       navigate("/");
       return;
     }
 
+    const config = TAB_CONFIG[tab] || TAB_CONFIG.components;
+
     try {
       setLoading(true);
-      setLoadingMessage("Extracting components...");
+      setLoadingMessage(config.loadingText);
+      setSelectedPagePath(""); // reset selection on switch
 
-      const response = await axios.get(
-        "http://localhost:9091/content/exportComponentsToJSON",
-        {
-          params: {
-            domainUrl,
-            userName: "ruchithk@nextrow.com",
-          },
-        }
-      );
+      const response = await axios.get(config.endpoint, {
+        params: {
+          domainUrl,
+          userName: "ruchithk@nextrow.com",
+        },
+      });
 
-      console.log(
-        "Export Components Response",
-        response.data
-      );
+      console.log(`${tab} Response`, response.data);
 
-      const data = response?.data?.components || [];
+      const data =
+        response?.data?.components ||
+        response?.data?.pageData ||
+        response?.data?.forms ||
+        response?.data ||
+        [];
 
-      setComponents(data);
+      setComponents(Array.isArray(data) ? data : []);
 
-      if (data.length > 0) {
+      if (Array.isArray(data) && data.length > 0) {
         const firstPath = getPagePath(data[0]);
-
         setSelectedPagePath(firstPath || "");
       } else {
-        showSnackbar(
-          "No components were found for this domain.",
-          "error"
-        );
+        showSnackbar(config.errorText, "error");
       }
     } catch (error) {
       console.error(error);
-
-      showSnackbar(
-        "Unable to load components.",
-        "error"
-      );
+      showSnackbar(`Unable to load ${tab}.`, "error");
     } finally {
       setLoading(false);
       setLoadingMessage("");
     }
   }
+
+  const handleTabChange = (newTab) => {
+    if (newTab === activeTab) return;
+    setActiveTab(newTab);
+    loadData(newTab);
+  };
 
   const showSnackbar = (message, severity = "success") => {
     setSnackbarMessage(message);
@@ -109,36 +132,28 @@ const DataPreview = () => {
 
   const handleChangeCustomData = (rowId, entry) => {
     setCustomDataByRowId((current) => {
-
       if (isEmptyEntry(entry)) {
         const { [rowId]: removed, ...remaining } = current;
         return remaining;
       }
-
       return { ...current, [rowId]: entry };
     });
   };
 
   const pagePaths = useMemo(() => {
     return [
-      ...new Set(
-        components.map((item) => getPagePath(item))
-      ),
+      ...new Set(components.map((item) => getPagePath(item))),
     ];
   }, [components]);
 
   const filteredComponents = useMemo(() => {
     return components.filter(
-      (item) =>
-        getPagePath(item) === selectedPagePath
+      (item) => getPagePath(item) === selectedPagePath
     );
   }, [components, selectedPagePath]);
 
   const formattedDomain = useMemo(() => {
-    if (!domainUrl) {
-      return "";
-    }
-
+    if (!domainUrl) return "";
     try {
       return new URL(domainUrl).hostname;
     } catch {
@@ -160,9 +175,7 @@ const DataPreview = () => {
       ====================================================== */}
 
       <section className="quip-preview-domain-bar">
-
         <div className="quip-preview-domain-left">
-
           <button
             type="button"
             className="quip-preview-back-button"
@@ -177,26 +190,16 @@ const DataPreview = () => {
           </div>
 
           <div className="quip-preview-domain-info">
-
-            <span className="quip-preview-domain-label">
-              DOMAIN
-            </span>
-
-            <span
-              className="quip-preview-domain-name"
-              title={domainUrl}
-            >
+            <span className="quip-preview-domain-label">DOMAIN</span>
+            <span className="quip-preview-domain-name" title={domainUrl}>
               {formattedDomain}
             </span>
           </div>
-
         </div>
 
         <div className="quip-preview-domain-meta">
-
           <div className="quip-preview-status">
             <CheckCircleOutlineIcon />
-
             <span>Connected</span>
           </div>
 
@@ -204,37 +207,24 @@ const DataPreview = () => {
 
           <div className="quip-preview-stat">
             <LayersOutlinedIcon />
-
-            <strong>
-              {components.length}
-            </strong>
-
-            <span>components</span>
+            <strong>{components.length}</strong>
+            <span>{activeTab}</span>
           </div>
 
           <div className="quip-preview-stat-divider" />
 
           <div className="quip-preview-stat">
-            <strong>
-              {pagePaths.length}
-            </strong>
-
-            <span>pages</span>
+            <strong>{pagePaths.length}</strong>
+            <span>paths</span>
           </div>
-
         </div>
-
       </section>
 
-      {/* =====================================================
-          WORKSPACE
-      ====================================================== */}
-
       <main className="quip-preview-workspace">
-
-        {/* PAGE SIDEBAR */}
-
+        {/* Pass activeTab and onTabChange to SideBar */}
         <SideBar
+          activeTab={activeTab}
+          onTabChange={handleTabChange}
           pagePaths={pagePaths}
           selectedPagePath={selectedPagePath}
           onSelectPagePath={(pagePath) => {
@@ -245,40 +235,28 @@ const DataPreview = () => {
         {/* EDITOR AREA */}
 
         <section className="quip-preview-editor">
-
           <div className="quip-preview-editor-header">
-
             <div className="quip-preview-editor-heading">
-
               <span className="quip-preview-editor-eyebrow">
-                PAGE
+                {activeTab.toUpperCase()}
               </span>
-
               <h1
                 className="quip-preview-editor-title"
                 title={selectedPagePath}
               >
-                {selectedPagePath || "No page selected"}
+                {selectedPagePath || "No path selected"}
               </h1>
-
             </div>
 
             <div className="quip-preview-component-count">
-              <span>
-                {filteredComponents.length}
-              </span>
-
-              {filteredComponents.length === 1
-                ? "component"
-                : "components"}
+              <span>{filteredComponents.length}</span>
+              {filteredComponents.length === 1 ? "item" : "items"}
             </div>
-
           </div>
 
           <div className="quip-preview-editor-divider" />
 
           <div className="quip-preview-editor-content">
-
             {selectedPagePath ? (
               <ComponentEditor
                 components={filteredComponents}
@@ -291,20 +269,12 @@ const DataPreview = () => {
                 <div className="quip-preview-no-page-icon">
                   <LayersOutlinedIcon />
                 </div>
-
-                <h2>Select a page</h2>
-
-                <p>
-                  Choose a page from the sidebar to
-                  inspect its components.
-                </p>
+                <h2>Select an item</h2>
+                <p>Choose an entry from the sidebar to inspect its data.</p>
               </div>
             )}
-
           </div>
-
         </section>
-
       </main>
 
       {/* =====================================================
@@ -315,50 +285,24 @@ const DataPreview = () => {
         open={open}
         autoHideDuration={3000}
         onClose={() => setOpen(false)}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "center",
-        }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert
-          severity={status}
-          variant="filled"
-          onClose={() => setOpen(false)}
-        >
+        <Alert severity={status} variant="filled" onClose={() => setOpen(false)}>
           {snackbarMessage}
         </Alert>
       </Snackbar>
 
-      {/* =====================================================
-          FOOTER
-      ====================================================== */}
-
       <Footer />
-
-      {/* =====================================================
-          LOADING
-      ====================================================== */}
 
       {loading && (
         <div className="quip-preview-loading">
-
           <div className="quip-preview-loading-card">
-
             <div className="quip-preview-loading-spinner" />
-
-            <div className="quip-preview-loading-title">
-              Extracting components
-            </div>
-
-            <div className="quip-preview-loading-message">
-              {loadingMessage}
-            </div>
-
+            <div className="quip-preview-loading-title">Extracting data</div>
+            <div className="quip-preview-loading-message">{loadingMessage}</div>
           </div>
-
         </div>
       )}
-
     </div>
   );
 };

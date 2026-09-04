@@ -23,7 +23,7 @@ const TAB_CONFIG = {
     errorText: "No components were found for this domain.",
   },
   pages: {
-    endpoint: "http://localhost:9091/content/exportPagePropertiesV2", // updated endpoint for pages
+    endpoint: "http://localhost:9091/content/exportPageProperties", // updated endpoint for pages
     loadingText: "Extracting pages...",
     errorText: "No pages were found for this domain.",
   },
@@ -97,7 +97,7 @@ const DataPreview = () => {
       const data =
         response?.data?.components ||
         response?.data?.pageData ||
-        response?.data?.forms ||
+        response?.data?.formsData ||
         response?.data ||
         [];
 

@@ -11,6 +11,7 @@ import Header from "../Pages/Header";
 import Footer from "../Pages/Footer";
 import SideBar from "./SideBar";
 import ComponentEditor from "./ComponentEditor";
+import { isEmptyEntry } from "../Utils/customData";
 
 import "../styles/dataPreview.css";
 
@@ -33,7 +34,9 @@ const DataPreview = () => {
 
   const [components, setComponents] = useState([]);
   const [selectedPagePath, setSelectedPagePath] = useState("");
-  const [selectedComponent, setSelectedComponent] = useState(null);
+
+
+  const [customDataByRowId, setCustomDataByRowId] = useState({});
 
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
@@ -102,6 +105,18 @@ const DataPreview = () => {
     setSnackbarMessage(message);
     setStatus(severity);
     setOpen(true);
+  };
+
+  const handleChangeCustomData = (rowId, entry) => {
+    setCustomDataByRowId((current) => {
+
+      if (isEmptyEntry(entry)) {
+        const { [rowId]: removed, ...remaining } = current;
+        return remaining;
+      }
+
+      return { ...current, [rowId]: entry };
+    });
   };
 
   const pagePaths = useMemo(() => {
@@ -224,7 +239,6 @@ const DataPreview = () => {
           selectedPagePath={selectedPagePath}
           onSelectPagePath={(pagePath) => {
             setSelectedPagePath(pagePath);
-            setSelectedComponent(null);
           }}
         />
 
@@ -268,8 +282,9 @@ const DataPreview = () => {
             {selectedPagePath ? (
               <ComponentEditor
                 components={filteredComponents}
-                selectedComponent={selectedComponent}
-                onSelectComponent={setSelectedComponent}
+                pagePath={selectedPagePath}
+                customDataByRowId={customDataByRowId}
+                onChangeCustomData={handleChangeCustomData}
               />
             ) : (
               <div className="quip-preview-no-page">
